@@ -124,7 +124,25 @@ docker-compose restart
 docker-compose up -d --build
 ```
 
-### Docker (without docker-compose)
+### Docker - Pre-built Image (Fastest)
+
+```bash
+# 1. Create .env file
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
+
+# 2. Pull and run from GHCR
+docker run -d \
+  --name vocas \
+  -p 5000:5000 \
+  --env-file .env \
+  -v $(pwd)/backend/static/audio:/app/static/audio \
+  ghcr.io/mirecekd/vocas:latest
+
+# 3. Application runs on http://localhost:5000
+```
+
+### Docker - Build Locally
 
 ```bash
 # 1. Create .env file

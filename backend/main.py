@@ -29,6 +29,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def get_base_url(request: Request) -> str:
+    """
+    Get the correct base URL respecting X-Forwarded-Proto header from reverse proxy.
+    This is critical when running behind nginx with SSL termination.
+    """
+    # Check X-Forwarded-Proto header (set by nginx/reverse proxy)
+    forwarded_proto = request.headers.get("x-forwarded-proto", None)
+    forwarded_host = request.headers.get("x-forwarded-host", None)
+    host = request.headers.get("host", str(request.base_url.netloc))
+    
+    # Debug logging
+    logger.info(f"Headers: X-Forwarded-Proto={forwarded_proto}, X-Forwarded-Host={forwarded_host}, Host={host}")
+    
+    if forwarded_proto:
+        # We're behind a reverse proxy with proper headers
+        actual_host = forwarded_host or host
+        return f"{forwarded_proto}://{actual_host}"
+    
+    # Fallback: If host is a real domain (not localhost), assume HTTPS
+    # This handles cases where reverse proxy doesn't send X-Forwarded-Proto
+    if host and not host.startswith("localhost") and not host.startswith("127.") and ":" not in host.split(".")[0]:
+        # Looks like a domain name (e.g., vocas.mirecek.org) - use HTTPS
+        return f"https://{host}"
+    
+    # Local development - use base_url as-is
+    return str(request.base_url).rstrip('/')
+
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -63,8 +90,8 @@ async def read_url(request: Request, url: str):
     """
     Proxy endpoint. Fetches URL and injects overlay.
     """
-    # Base host for injecting scripts (e.g., http://localhost:5000)
-    base_host = str(request.base_url).rstrip('/')
+    # Base host for injecting scripts - respects X-Forwarded-Proto from nginx
+    base_host = get_base_url(request)
     
     html_content = await proxy_service.fetch_and_process(url, base_host)
     

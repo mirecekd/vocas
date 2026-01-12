@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocas 2.0 - Reader</title>
+    <title>VOCAS 2.0 - Reader</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/favicon.svg">
     <style>
         :root {
             --bg-color: #121212;
@@ -28,9 +30,17 @@
             max-width: 700px;
         }
         h1 {
-            font-size: 2rem;
+            font-size: 1.4rem;
             margin-bottom: 2rem;
             color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .logo {
+            width: 64px;
+            height: 64px;
         }
         .search-box {
             display: flex;
@@ -110,7 +120,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Voice Oriented Content Aggregation System</h1>
+        <h1>
+            <img src="/static/favicon.svg" class="logo" alt="VOCAS Logo">
+            <span>Voice Oriented Content Aggregation System</span>
+        </h1>
         
         <form id="searchForm" class="search-box">
             <input type="text" id="urlInput" placeholder="Zadej webovou adresu..." autocomplete="off">
