@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+requests
+beautifulsoup4
+jinja2
+google-generativeai
+gtts
+pydub
+trafilatura
+python-dotenv
+httpx
+
+# TTS Providers
+edge-tts
+elevenlabs
+boto3
+nest-asyncio

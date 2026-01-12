@@ -1,0 +1,72 @@
+#vocas-overlay {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(18, 18, 18, 0.95);
+    padding: 15px;
+    border-radius: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 999999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+    font-family: sans-serif;
+    flex-direction: column;
+}
+
+.vocas-btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: black;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.1s;
+}
+
+.vocas-btn:active {
+    transform: scale(0.95);
+}
+
+.vocas-btn-read {
+    background-color: #ff9800;
+}
+
+.vocas-btn-summary {
+    background-color: #4caf50;
+}
+
+.vocas-btn-stop {
+    background-color: #f44336;
+    color: white;
+}
+
+.vocas-btn-home {
+    background-color: #607d8b;
+    padding: 15px;
+}
+
+#vocas-status {
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: none;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#vocas-audio-player {
+    display: none; /* We use JS Audio object, but if visible controls wanted, change this */
+}
+
+/* Reader View Highlights */
+.vocas-highlight {
+    outline: 4px solid #ff9800 !important;
+    background: rgba(255, 152, 0, 0.1) !important;
+}

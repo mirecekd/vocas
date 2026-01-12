@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocas 2.0 - Reader</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --accent-color: #ff9800;
+            --search-bg: #2c2c2c;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+        }
+        .search-box {
+            display: flex;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            background-color: var(--search-bg);
+            color: white;
+            outline: none;
+        }
+        button.go-btn {
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            background-color: var(--accent-color);
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button.go-btn:hover {
+            opacity: 0.9;
+        }
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+        .link-card {
+            background-color: var(--search-bg);
+            padding: 1rem;
+            border-radius: 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+        }
+        .link-card:hover {
+            transform: translateY(-5px);
+            background-color: #3d3d3d;
+        }
+        .link-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 3px solid var(--accent-color);
+            color: #999;
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Oriented Content Aggregation System</h1>
+        
+        <form id="searchForm" class="search-box">
+            <input type="text" id="urlInput" placeholder="Zadej webovou adresu..." autocomplete="off">
+            <button type="submit" class="go-btn">JÍT</button>
+        </form>
+
+        <div class="quick-links">
+            <!-- Řádek 1: Zpravodajské servery -->
+            <a href="/read/https://www.aktualne.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=aktualne.cz&sz=64" class="link-icon" alt="Aktuálně.cz">
+                <div>Aktuálně.cz</div>
+            </a>
+            <a href="/read/https://ct24.ceskatelevize.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=ct24.ceskatelevize.cz&sz=64" class="link-icon" alt="ČT24">
+                <div>ČT24</div>
+            </a>
+            <a href="/read/https://www.irozhlas.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=irozhlas.cz&sz=64" class="link-icon" alt="iRozhlas">
+                <div>iRozhlas</div>
+            </a>
+            <a href="/read/https://www.hn.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=hn.cz&sz=64" class="link-icon" alt="HN.cz">
+                <div>HN.cz</div>
+            </a>
+
+            <!-- Řádek 2: Další zprávy + IT -->
+            <a href="/read/https://www.denik.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=denik.cz&sz=64" class="link-icon" alt="Deník.cz">
+                <div>Deník.cz</div>
+            </a>
+            <a href="/read/https://www.lupa.cz/clanky/" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=lupa.cz&sz=64" class="link-icon" alt="Lupa.cz">
+                <div>Lupa.cz</div>
+            </a>
+            <a href="/read/https://www.root.cz/clanky/" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=root.cz&sz=64" class="link-icon" alt="Root.cz">
+                <div>Root.cz</div>
+            </a>
+            <a href="/read/https://www.scienceworld.cz/" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=scienceworld.cz&sz=64" class="link-icon" alt="ScienceWorld.cz">
+                <div>ScienceWorld.cz</div>
+            </a>
+
+            <!-- Řádek 3 -->
+            <a href="/read/https://21stoleti.cz" class="link-card">
+                <img src="https://www.google.com/s2/favicons?domain=21stoleti.cz&sz=64" class="link-icon" alt="21.století">
+                <div>21.století</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            VOCAS 2.0 &copy; <a href="mailto:mirecekd@gmail.com">Miroslav Dvořák</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let url = document.getElementById('urlInput').value.trim();
+            if (url) {
+                // Normalize URL
+                if (!url.startsWith('http')) {
+                    // Try to guess if it's a domain
+                    if (!url.includes('.')) {
+                        // Google search fallback? For now just assume .cz
+                        url = 'https://' + url + '.cz'; 
+                    } else {
+                        url = 'https://' + url;
+                    }
+                }
+                window.location.href = '/read/' + url;
+            }
+        });
+    </script>
+</body>
+</html>
