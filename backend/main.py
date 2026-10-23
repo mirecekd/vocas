@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, HTTPException, Body
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse, JSONResponse
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from urllib.parse import parse_qs, quote
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -86,7 +86,10 @@ templates = Jinja2Templates(directory="templates")
 
 # Services
 proxy_service = ProxyService()
-llm_service = LLMService(api_key=os.getenv("GEMINI_API_KEY"))
+llm_service = LLMService(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
+)
 
 # TTS Service - provider from ENV (default: edge)
 tts_provider = os.getenv("TTS_PROVIDER", "edge")

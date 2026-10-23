@@ -3,7 +3,7 @@ uvicorn
 requests
 beautifulsoup4
 jinja2
-google-generativeai
+google-genai
 gtts
 pydub
 trafilatura

@@ -1,0 +1,8 @@
+memory-bank/
+.env
+.git
+.github
+__pycache__/
+*.pyc
+backend/static/audio/*.mp3
+LINKEDIN_POST.md

@@ -10,6 +10,7 @@ services:
       - ./backend/static/audio:/app/static/audio
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.1-flash-lite}
       - USR=${USR}
       - PAS=${PAS}
       - SECRET_KEY=${SECRET_KEY:-}

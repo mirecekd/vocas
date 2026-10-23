@@ -186,6 +186,8 @@ PAS=change_me
 
 # LLM (Gemini)
 GEMINI_API_KEY=your_gemini_api_key_here
+# Optional, default: gemini-3.1-flash-lite
+# GEMINI_MODEL=gemini-3.1-flash-lite
 
 # TTS Provider Selection
 # Options: edge, elevenlabs, polly
