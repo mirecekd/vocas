@@ -178,6 +178,12 @@ docker run -d `
 Create a `.env` file in the project root:
 
 ```env
+# Login - if USR or PAS is empty, authentication is disabled.
+# Session cookie lasts 365 days; changing USR/PAS/SECRET_KEY logs everyone out.
+USR=admin
+PAS=change_me
+# SECRET_KEY=optional_cookie_signing_key
+
 # LLM (Gemini)
 GEMINI_API_KEY=your_gemini_api_key_here
 

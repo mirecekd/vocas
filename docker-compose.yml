@@ -10,4 +10,7 @@ services:
       - ./backend/static/audio:/app/static/audio
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - USR=${USR}
+      - PAS=${PAS}
+      - SECRET_KEY=${SECRET_KEY:-}
     restart: unless-stopped

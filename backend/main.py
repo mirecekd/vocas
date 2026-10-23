@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException, Body
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse, JSONResponse
+from urllib.parse import parse_qs, quote
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -7,6 +8,7 @@ import os
 import logging
 from dotenv import load_dotenv
 
+import auth
 from services.proxy import ProxyService
 from services.llm import LLMService
 from services.tts import TTSService
@@ -56,6 +58,26 @@ def get_base_url(request: Request) -> str:
     # Local development - use base_url as-is
     return str(request.base_url).rstrip('/')
 
+if not auth.auth_enabled():
+    logger.warning("USR/PAS not set - authentication is DISABLED")
+
+
+@app.middleware("http")
+async def require_login(request: Request, call_next):
+    """Gate everything except the login page behind the session cookie."""
+    path = request.url.path
+    if (
+        not auth.auth_enabled()
+        or path in auth.PUBLIC_PATHS
+        or auth.valid_token(request.cookies.get(auth.COOKIE_NAME))
+    ):
+        return await call_next(request)
+    if path.startswith("/api/"):
+        return JSONResponse({"detail": "Not authenticated"}, status_code=401)
+    target = request.url.path + (f"?{request.url.query}" if request.url.query else "")
+    return RedirectResponse(f"/login?next={quote(target)}", status_code=303)
+
+
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -70,6 +92,49 @@ llm_service = LLMService(api_key=os.getenv("GEMINI_API_KEY"))
 tts_provider = os.getenv("TTS_PROVIDER", "edge")
 tts_service = TTSService(output_dir="static/audio", provider=tts_provider)
 
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request, next: str = "/"):
+    return templates.TemplateResponse(
+        request, "login.html", {"next": auth.safe_next(next), "error": False}
+    )
+
+
+@app.post("/login")
+async def login(request: Request):
+    # Parse urlencoded form by hand to avoid the python-multipart dependency
+    form = parse_qs((await request.body()).decode(), keep_blank_values=True)
+    username = form.get("username", [""])[0]
+    password = form.get("password", [""])[0]
+    next_url = auth.safe_next(form.get("next", ["/"])[0])
+
+    if not auth.auth_enabled() or not auth.check_credentials(username, password):
+        logger.warning("Failed login attempt for user %r", username)
+        return templates.TemplateResponse(
+            request,
+            "login.html",
+            {"next": next_url, "error": True},
+            status_code=401,
+        )
+
+    response = RedirectResponse(next_url, status_code=303)
+    response.set_cookie(
+        auth.COOKIE_NAME,
+        auth.make_token(),
+        max_age=auth.COOKIE_MAX_AGE,
+        httponly=True,
+        samesite="lax",
+        secure=get_base_url(request).startswith("https://"),
+    )
+    return response
+
+
+@app.get("/logout")
+async def logout():
+    response = RedirectResponse("/login", status_code=303)
+    response.delete_cookie(auth.COOKIE_NAME)
+    return response
+
+
 class ProcessRequest(BaseModel):
     text: str
     mode: str = "read" # 'read' or 'summarize'
@@ -83,7 +148,7 @@ async def home(request: Request):
     """
     Homepage with search bar and quick links.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 @app.get("/read/{url:path}", response_class=HTMLResponse)
 async def read_url(request: Request, url: str):
