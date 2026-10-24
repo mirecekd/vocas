@@ -1,9 +1,15 @@
 """
 Microsoft Edge TTS implementace
 """
+import logging
 import edge_tts
 import asyncio
 from .base import BaseTTS
+
+logger = logging.getLogger(__name__)
+
+# Edge TTS intermittently returns NoAudioReceived (voice-specific), so each voice is retried
+ATTEMPTS_PER_VOICE = 2
 
 
 class EdgeTTS(BaseTTS):
@@ -12,7 +18,8 @@ class EdgeTTS(BaseTTS):
     Nabízí kvalitní české hlasy.
     """
     
-    def __init__(self, voice: str = 'cs-CZ-AntoninNeural', rate: str = '+0%', pitch: str = '+0Hz'):
+    def __init__(self, voice: str = 'cs-CZ-AntoninNeural', rate: str = '+0%', pitch: str = '+0Hz',
+                 fallback_voice: str = ''):
         """
         Inicializace Edge TTS.
         
@@ -23,10 +30,12 @@ class EdgeTTS(BaseTTS):
                    - cs-CZ-AntoninNeural (mužský)
             rate: Rychlost řeči (default: '+0%', možnosti: '-50%' až '+100%')
             pitch: Výška hlasu (default: '+0Hz', možnosti: '-50Hz' až '+50Hz')
+            fallback_voice: Záložní hlas, když hlavní hlas opakovaně selže (prázdné = žádný)
         """
         self.voice = voice
         self.rate = rate
         self.pitch = pitch
+        self.fallback_voice = fallback_voice
     
     def generate(self, text: str, output_path: str) -> str:
         """
@@ -64,17 +73,27 @@ class EdgeTTS(BaseTTS):
             text: Text k přečtení
             output_path: Cesta k výstupnímu souboru
         """
-        # Vytvoření Edge TTS komunikace
-        communicate = edge_tts.Communicate(
-            text=text,
-            voice=self.voice,
-            rate=self.rate,
-            pitch=self.pitch
-        )
-        
-        # Uložení audio
-        await communicate.save(output_path)
-    
+        voices = [self.voice]
+        if self.fallback_voice and self.fallback_voice != self.voice:
+            voices.append(self.fallback_voice)
+
+        last_error: Exception | None = None
+        for voice in voices:
+            for attempt in range(1, ATTEMPTS_PER_VOICE + 1):
+                try:
+                    communicate = edge_tts.Communicate(
+                        text=text, voice=voice, rate=self.rate, pitch=self.pitch
+                    )
+                    await communicate.save(output_path)
+                    if voice != self.voice:
+                        logger.warning(f"Edge TTS used fallback voice {voice}")
+                    return
+                except edge_tts.exceptions.NoAudioReceived as e:
+                    last_error = e
+                    logger.warning(f"Edge TTS {voice} attempt {attempt}/{ATTEMPTS_PER_VOICE}: {e}")
+        assert last_error is not None
+        raise last_error
+
     def get_provider_name(self) -> str:
         """
         Vrátí název poskytovatele.

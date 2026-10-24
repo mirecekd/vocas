@@ -195,6 +195,8 @@ TTS_PROVIDER=edge
 
 # Edge TTS (free, good Czech voices)
 EDGE_VOICE=cs-CZ-AntoninNeural
+# Used when the main voice repeatedly fails (Edge TTS is flaky); default cs-CZ-VlastaNeural
+# EDGE_FALLBACK_VOICE=cs-CZ-VlastaNeural
 EDGE_RATE=+0%
 EDGE_PITCH=+0Hz
 

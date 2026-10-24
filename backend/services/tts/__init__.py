@@ -54,7 +54,8 @@ class TTSService:
                 return EdgeTTS(
                     voice=os.getenv('EDGE_VOICE', 'cs-CZ-AntoninNeural'),
                     rate=os.getenv('EDGE_RATE', '+0%'),
-                    pitch=os.getenv('EDGE_PITCH', '+0Hz')
+                    pitch=os.getenv('EDGE_PITCH', '+0Hz'),
+                    fallback_voice=os.getenv('EDGE_FALLBACK_VOICE', 'cs-CZ-VlastaNeural')
                 )
             
             elif provider == "elevenlabs":
